@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual env
+venv/
+env/
+
+# DVC
+.dvc/
+dvc_data/
+
+# MLflow
+mlruns/
+
+# Model artifacts
+*.pt
+*.pkl
+*.h5
+
+# OS files
+.DS_Store
+Thumbs.db
