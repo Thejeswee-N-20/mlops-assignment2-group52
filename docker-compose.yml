@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+  cats-dogs-api:
+    build: .
+    container_name: cats-dogs-api
+    ports:
+      - "8000:8000"
+    restart: always
