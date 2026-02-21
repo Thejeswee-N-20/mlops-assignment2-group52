@@ -1,0 +1,15 @@
+torch==2.10.0
+torchvision==0.25.0
+fastapi==0.129.0
+uvicorn==0.41.0
+python-multipart==0.0.22
+mlflow==3.10.0
+dvc==3.66.1
+dvc-data==3.18.2
+dvc-http==2.32.0
+dvc-objects==5.2.0
+dvc-render==1.0.2
+dvc-studio-client==0.22.0
+dvc-task==0.40.2
+pillow==12.1.1
+tqdm==4.66.5
