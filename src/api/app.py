@@ -61,9 +61,14 @@ class SimpleCNN(nn.Module):
 # ---------------------------
 # Load Model
 # ---------------------------
-model = SimpleCNN().to(DEVICE)
-model.load_state_dict(torch.load(MODEL_PATH, map_location=DEVICE))
-model.eval()
+model = None
+
+def load_model():
+    global model
+    if model is None:
+        model = SimpleCNN().to(DEVICE)
+        model.load_state_dict(torch.load(MODEL_PATH, map_location=DEVICE))
+        model.eval()
 
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
@@ -84,6 +89,7 @@ def health():
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
+    load_model()
     """Prediction endpoint."""
     global request_count
     request_count += 1
