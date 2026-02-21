@@ -8,7 +8,8 @@ Provides:
 This service loads the trained CNN model
 and serves predictions via REST API.
 """
-
+import logging
+import time
 import torch
 import torch.nn as nn
 from torchvision import transforms
@@ -16,6 +17,10 @@ from PIL import Image
 from fastapi import FastAPI, UploadFile, File
 import io
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+request_count = 0
 # ---------------------------
 # Config
 # ---------------------------
@@ -70,16 +75,19 @@ transform = transforms.Compose([
 # ---------------------------
 app = FastAPI()
 
-
 @app.get("/health")
 def health():
-    """Health check endpoint."""
-    return {"status": "API is running"}
-
+    return {
+        "status": "API is running",
+        "requests_served": request_count
+    }
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     """Prediction endpoint."""
+    global request_count
+    request_count += 1
+    start_time = time.time()
     image_bytes = await file.read()
     image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
 
@@ -88,6 +96,8 @@ async def predict(file: UploadFile = File(...)):
     with torch.no_grad():
         outputs = model(image)
         probs = torch.softmax(outputs, dim=1)[0]
+    latency = time.time() - start_time
+    logger.info(f"Prediction served in {latency:.3f} seconds")
 
     return {
         "prediction": CLASS_NAMES[probs.argmax().item()],
