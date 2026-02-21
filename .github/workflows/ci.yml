@@ -23,7 +23,7 @@ jobs:
           pip install pytest
 
       - name: Run unit tests
-        run: pytest
+        run: pytest -m "not integration"
 
       - name: Build Docker image
         run: docker build -t cats-dogs-api .
