@@ -38,3 +38,26 @@ jobs:
         run: |
           docker tag cats-dogs-api ${{ secrets.DOCKER_USERNAME }}/cats-dogs-api:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/cats-dogs-api:latest
+          
+  deploy:
+    needs: build-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pull Docker Image
+        run: docker pull ${{ secrets.DOCKER_USERNAME }}/cats-dogs-api:latest
+
+      - name: Stop Existing Container
+        run: |
+          docker stop cats-dogs-api || true
+          docker rm cats-dogs-api || true
+
+      - name: Run New Container
+        run: |
+          docker run -d -p 8000:8000 --name cats-dogs-api ${{ secrets.DOCKER_USERNAME }}/cats-dogs-api:latest
+
+      - name: Wait for Service to Start
+        run: sleep 15
+
+      - name: Smoke Test - Health Check
+        run: curl http://localhost:8000/health 
